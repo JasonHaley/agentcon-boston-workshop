@@ -61,11 +61,11 @@ AZURE_DOCUMENTINTELLIGENCE_SERVICE=<doc intelligence service name>
 AZURE_DOCUMENTINTELLIGENCE_API_KEY=<doc intelligence api key>
 
 AZURE_SEARCH_ENDPOINT=<search endpoint>
-AZURE_SEARCH_INDEX_NAME=<sarch index name>>
+AZURE_SEARCH_INDEX_NAME=<sarch index name>
 AZURE_SEARCH_API_KEY=<search api key>
 
 AZURE_OPENAI_ENDPOINT=<openai endpoint>
-AZURE_OPENAI_API_KEY=<openai api keyL
+AZURE_OPENAI_API_KEY=<openai api key>
 
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-large
 AZURE_OPENAI_MODEL_NAME=text-embedding-3-large
@@ -90,3 +90,6 @@ Your browser should open and you should get the UI shown below:
 
 ![Chainlit hello](assets/lab0-img2.png)
 
+3. Now press Control + C to cancel out of the running Chainlit
+
+Your development environment should now be ready to begin Lab 1

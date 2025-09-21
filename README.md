@@ -36,9 +36,9 @@ Please install the software ahead of the workshop:
 |---------------------------------------------|-------------------------------|
 | Lab 0 - Getting started                     | [Link](./labs/lab0/readme.md) |
 | Lab 1 - Processing PDFs to be useful in RAG | [Link](./labs/lab1/readme.md) |
-| Lab 2                                       | [Link](./labs/lab2/readme.md) |
-| Lab 3                                       | [Link](./labs/lab3/readme.md) |
-| Lab 4                                       | [Link](./labs/lab4/readme.md) |
+| Lab 2 - Create the first agent              | [Link](./labs/lab2/readme.md) |
+| Lab 3 - Refactor to use multiple agents     | [Link](./labs/lab3/readme.md) |
+| Lab 4 - Doc Gen with MCP                    | [Link](./labs/lab4/readme.md) |
 
 ## Contributors
 
