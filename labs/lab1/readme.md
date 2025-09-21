@@ -60,7 +60,7 @@ Now we have all the text from the pdf.
 
 > ## RAG Note
 > 
-> When you are parsing files in order to use for a retrieval system, it is important to know what is in those documents in order to make > your retrieval more effective. The old saying "Garbage in, Garbage out" applies here.
+> When you are parsing files in order to use for a retrieval system, it is important to know what is in those documents in order to make your retrieval more effective. The old saying "Garbage in, Garbage out" applies here.
 > 
 > If you open the sample pdf files in the data directory, you will notice the clauses of the contract are nicely separated by headings.
 > This is why we are using markdown to parse these files.
@@ -72,7 +72,7 @@ Now we have all the text from the pdf.
 
 LangChain has a great text splitter that will take the PDF text and create chunks broken on the headings for us: [MarkdownHeaderTextSplitter](https://python.langchain.com/docs/how_to/markdown_header_metadata_splitter/)
 
-1. In the **document_processor**.py* file, around line 34, you can see the constant `DEFAULT_HEADERS` defined:
+1. In the **document_processor.py** file, around line 34, you can see the constant `DEFAULT_HEADERS` defined:
 
 ![DEFAULT HEADERS](assets/lab1-img3.png)
 
@@ -91,7 +91,7 @@ This instantiates the splitter, sets the heading levels and indicates the sectio
 
 > **Question**: Why am I removing the header text from the chunks?
 > 
-> **Answer**: This has to do with know the data and how we want it to be useful for retrieval. The system is going to work with clauses of the contract, we don't need the heading in that clause - so we will use it as metadata instead.
+> **Answer**: This has to do with knowing the data and how we want it to be useful for retrieval. The system is going to work with clauses of the contract, we don't need the heading in that clause - so we will use it as metadata instead.
 
 3. Again navigate to the **process_file** method and locate the comment `# TODO: Split into chunks and create clauses` and replace it with this:
 ```
@@ -106,7 +106,19 @@ This code uses the internal method `_create_clauses` which splits the `full_text
 
 ## Create metadata about the clauses and remove legal stop words
 
-So far the PDF has been parsed as marked down and split into the contract clauses using the markdown splitter. Now let's look at what metadaa we can gather and use for our retrieval system.
+So far the PDF has been parsed as markdown and split into the contract clauses using the markdown splitter. Next what can we do in addition to just having the text chunk from pdf to help our retrieval system?
+
+### Metadata
+Metadata we can use and get from the content and context of the chunks:
+- heading
+- use the heading to categorize the clause
+- index of the clause
+- indicate if it is a template file or not
+
+### Stop words
+Another technique we can use, is the removal of legal stop words from the pdf text chunk before we calculate embeddings on the text. Stop words are common words that occur often but carry very little substantive information, removing them should "sharpen" the effectiveness of our embedding for the retrieval system.
+
+> NOTE: we could also add the section headings to the "clean_text" to add more signal to our embedding - however I'll leave this as an exercise to the user to try out.
 
 1. 
 
