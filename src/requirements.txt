@@ -1,0 +1,14 @@
+azure-core
+azure-identity
+azure-search-documents
+azure-ai-documentintelligence
+azure-storage-blob
+chainlit
+langchain
+openai
+pathlib
+prompty
+python-dotenv
+semantic-kernel
+tenacity
+tiktoken
