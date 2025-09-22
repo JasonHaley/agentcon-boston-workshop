@@ -243,6 +243,6 @@ chainlit run main.py
 
 Once the file uploads it will then run the agent and compare the clause for you.
 
-![First comparison](assets/lab2-img1.png)
+![First comparison](assets/lab2-img2.png)
 
 Congratulations, you now created an agent!
