@@ -167,9 +167,9 @@ The steps for this agents are about the same as the previous agent, except we fi
             return "No clauses found in the uploaded document."
         return "\n\n".join([f"{clause.clause_type}: {clause.text_full}" for clause in clauses])
     
-    @kernel_function(name="get_all_template_clauses", description="Get all clauses in the template and return the full clause texts.")
-    async def get_all_template_clauses(self) -> str:
-        print(f"Getting all template clauses")
+    @kernel_function(name="get_all_template_contract_clauses", description="Get all clauses in the template and return the full clause texts.")
+    async def get_all_template_contract_clauses(self) -> str:
+        print(f"Getting all template contract clauses")
 
         clauses = await self.search_service.search_clauses_by_filter(filter=f"is_template eq true")
         if not clauses or len(clauses) == 0:
