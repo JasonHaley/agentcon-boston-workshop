@@ -49,4 +49,4 @@ Jason is an independent Full Stack Solution Architect with a deep focus on Azure
 [LinkedIn](https://www.linkedin.com/in/jason-a-haley/) | [Twitter](https://x.com/haleyjason) | [Jason's Blog](https://jasonhaley.com/) | [Email](mailto://info@jasonhaley.com)
 
 ## Other Resources
-- 
+- [azure-search-openai-demo](https://github.com/azure-Samples/azure-search-openai-demo/) is an open source RAG sample. A lot of the embedding service and saerch service logice was inspired from this project.

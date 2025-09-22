@@ -110,7 +110,7 @@ So far the PDF has been parsed as markdown and split into the contract clauses u
 
 ### Metadata
 Metadata we can use and get from the content and context of the chunks:
-- heading
+- headings
 - use the heading to categorize the clause
 - index of the clause
 - indicate if it is a template file or not
@@ -120,10 +120,147 @@ Another technique we can use, is the removal of legal stop words from the pdf te
 
 > NOTE: we could also add the section headings to the "clean_text" to add more signal to our embedding - however I'll leave this as an exercise to the user to try out.
 
-1. 
+1. In the **document_processor.py** file, find the comment `# TODO: Extract actual header from metadata` in the `_extract_section_header` method and replace it with the following:
+```
+            metadata.get("Header 3") or 
+            metadata.get("Header 2") or 
+            metadata.get("Header 1") or 
+```
+The LangChain markdown splitter gives us a metadata dictionary that has the headers showing where the text chunk is nested. We want to use the first heading up - which most likely will be an level 2 heading but in some cases Document Intelligence is throwing in a level 3 heading. Now that we have the heading for the clause, we want to categorize it.
+
+2. Find the **clause_classifier.py** file in the **utils** directory and open in.
+
+This file contains a lot of utility text parsing and regular expression matching type code. In order to create a clause_type category we are going to use text matching. 
+
+> NOTE: You could use a model to do the categorizing, but I'll leave that to another workshop.
+
+3. Toward the bottom of the file, find the comment `# TODO: Apply rules to classify heading` and replace it with the following:
+```
+    for ctype, patterns in RULES:
+        for pat in patterns:
+            if pat.search(h):
+                return ctype
+```
+
+This code finishes up the `classify_clause_heading` method which has 3 steps in it:
+- normalize the text
+- special case checking
+- regex rules applying
+
+> NOTE: If you attempt to use this code in another business domain or even want to be able process additional contracts with the final product - **you will need to modify one of these steps**. That unfortunately is the nature of text cleanup using code instead of an AI model.
+
+4. Back in the **document_processor.py** file, in the `_create_single_clause` method, find the comment `# TODO: populate clean text properly` and replace it with this line:
+```
+            text_clean=clean_text(chunk.page_content, self.stopwords),
+```
+This line uses the `clean_text` method to remove the stopword from the text chunk from the pdf. This should improve the retrieval by cutting down some of the noise in the text.
+
+Next, let's create those embeddings.
 
 ## Create embeddings for the clauses
 
+1. In the **document_process.py** file, find the `_index_clauses` method and the comment `# TODO create embeddings` and replace it with the following:
+```
+        embeddings = await self.embedding_service.create_embeddings(texts)
+```
+This takes that `text_clean` field from all the clauses and makes batch calls to the OpenAI embedding service to minimize the number of calls.
+
 ## Save clauses to an Azure AI Search Index
 
+1. A couple of lines below where you put the last code, find the comment `# TODO upload to search index` and replace it with the following:
+```
+        await self.search_service.upload_clauses(clauses, embeddings)
+```
+This takes the clauses and those embeddings and does a batch update to the search index.
+
+By this time, I"m sure you are getting impatient and want to get to the agent stuff right? Almost there - one last thing.
+
 ## Wire up Chainlit to test
+
+Now lets wire up the Chainlit UI logic and upload those sample files.
+
+1. Open the **main.py** file (in the **src** directory), and locate the comment `# TODO: Add document_processor import here` toward the top and replace it with:
+```
+from processors.document_processor import DocumentProcessor
+```
+
+2. Now find the comment `# TODO: Initialize your document processor here` and replace it with the following to initialize the document processor we'll be using with Chainlit:
+```
+processor = DocumentProcessor()
+```
+
+3. Finally, find the comment '# TODO: Add file processing logic here` in the `process_files` method and add the following to perform the file uploading and ingestion:
+```
+    if len(files) > 1:
+        await cl.Message(content="Only one file is supported at a time. Please upload a single file.").send()
+        return
+
+    filename = ""
+    for file in files:
+        filename = file.name
+        
+        await cl.Message(content=f"Ingesting file: {filename} ...").send()
+
+        with open(file.path, "rb") as f:
+            stats = await processor.process_file(f, filename)
+            print(f"Processed {stats.clauses_created} clauses from {stats.total_pages} pages")
+
+        # Send confirmation back to user
+        await cl.Message(content=f"Successfully ingested file: {filename}").send()
+        cl.user_session.set("filename", filename)
+```
+
+For this workshop, we only support a single file upload, so the first thing the logic does is verify there is only one file.
+
+Next since the method is given a list of files, we have to loop through it (even though we expecct exactly one) and grabs the name of the attached file, gets the stream and the calls off to the document processor to do its work. Once it is done, it will return the file and store it in a session variable.
+
+## Test it
+
+1. You have two choices here: run it in the debugger or just run it from the terminal:
+
+- To run from the debugger, Go to Run menu -> Start debugging
+- To run from command line, run
+```
+chainlit run main.py
+```
+
+Both should start up an instance of Chainlit:
+
+![Chainlit](assets/lab1-img5.png)
+
+2. In VS Code, right click on the **data** directory and select **Reveal in File Explorer**.
+3. In the Chainlit UI, click on the **paperclip icon** and choose the **template-01.pdf** file from the **data** directory and click the send button.
+
+![Chainlit Attachment](assets/lab1-img6.png)
+
+Give it around a minute. You should see activity in your terminal like this:
+```
+2025-09-22 09:08:06 - Loaded 216 stopwords
+2025-09-22 09:08:06 - Loaded desired terms file (7791 characters)
+2025-09-22 09:08:06 - Loaded 216 stopwords
+2025-09-22 09:08:06 - Loaded desired terms file (7791 characters)
+2025-09-22 09:08:06 - Your app is available at http://localhost:8000
+2025-09-22 09:08:07 - Translation file for en not found. Using default translation en-US.
+2025-09-22 09:08:08 - Translated markdown file for en not found. Defaulting to chainlit.md.
+2025-09-22 09:08:13 - Translation file for en not found. Using default translation en-US.
+2025-09-22 09:08:15 - Starting processing: template-01.pdf
+Extracting text from 'D:\__ai\agents\workshops\DocumentGeneration-Workshop\dry-run\src\.files\347eb208-d3b6-4a4f-afb5-9d7b994eba19\fa4e6dd6-1975-44d7-a787-99e805f74b03.pdf' using Azure Document Intelligence
+2025-09-22 09:08:15 - Request URL: 'https://doci-agentcon.cognitiveservices.azure.com/documentintelligence/documentModels/prebuilt-layout:analyze?api-version=REDACTED&outputContentFormat=REDACTED'
+Request method: 'POST'
+Request headers:
+    'Content-Length': '40831'
+    'content-type': 'application/octet-stream'
+    'Accept': 'application/json'
+    'x-ms-client-request-id': '3357d63e-97b5-11f0-bd42-60ff9e46c389'
+    'User-Agent': 'azsdk-python-ai-documentintelligence/1.0.2 Python/3.12.10 (Windows-11-10.0.26100-SP0)'
+    'Ocp-Apim-Subscription-Key': 'REDACTED'
+A body is sent with the request
+2025-09-22 09:08:15 - Response status: 202
+....
+```
+
+And eventually you should see the verification in the UI:
+
+![Template uploaded](assets/lab1-img7.png)
+
+Now we can move on to the agents!

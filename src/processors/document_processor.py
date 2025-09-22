@@ -62,9 +62,9 @@ class DocumentProcessor:
         
         # TODO: Initialize text splitter
                 
-        # TODO: Load stopwords
-
-        
+        # Load stopwords once during initialization
+        self._load_stopwords()
+                
         # Load desired terms if configured
         self.desired_terms = self._load_desired_terms()
     
@@ -116,12 +116,10 @@ class DocumentProcessor:
             # TODO: Combine all page text
                         
             # TODO: Split into chunks and create clauses
-            
-            # TODO: Generate embeddings and upload to search index
-            
-            # TODO: Create and return processing statistics
-            stats = ProcessingStats()
-            
+                        
+            await self._index_clauses(clauses)
+
+            stats = self._create_stats(filename, pages, full_text, [], clauses)
             self.logger.info(f"Successfully processed {filename}: {stats.clauses_created} clauses indexed")
             return stats
             
@@ -186,7 +184,7 @@ class DocumentProcessor:
             section_index=chunk_index,
             section=section_header,
             text_full=chunk.page_content,
-            text_clean=clean_text(chunk.page_content, self.stopwords),
+            # TODO: populate clean text properly
             entity_type="clause" if clause_type else "",
             clause_type=clause_type or "",
             is_template=self._is_template_file(filename)
@@ -209,10 +207,10 @@ class DocumentProcessor:
         texts = [clause.text_clean for clause in clauses]
         
         # Create embeddings
-        embeddings = await self.embedding_service.create_embeddings(texts)
+        # TODO create embeddings
         
         # Upload to search index
-        await self.search_service.upload_clauses(clauses, embeddings)
+        # TODO upload to search index
         
         self.logger.info(f"Successfully indexed {len(clauses)} clauses")
     
