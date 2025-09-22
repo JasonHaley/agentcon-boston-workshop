@@ -264,3 +264,5 @@ And eventually you should see the verification in the UI:
 ![Template uploaded](assets/lab1-img7.png)
 
 Now we can move on to the agents!
+
+> NOTE: Make sure you stop you debugger or cancel out of Chainlit before going on to Lab 2

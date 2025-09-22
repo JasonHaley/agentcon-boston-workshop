@@ -38,5 +38,9 @@ class Config:
     @property
     def document_intelligence_credential(self):
         return AzureKeyCredential(self.AZURE_DOCUMENTINTELLIGENCE_API_KEY)
+    
+    @property
+    def openai_credential(self):
+        return AzureKeyCredential(self.AZURE_OPENAI_API_KEY)
 
 config = Config()

@@ -9,8 +9,6 @@ model:
         azure_deployment: ${env:AZURE_OPENAI_CHAT_DEPLOYMENT_NAME}
         api_version: 2024-12-01-preview
 sample:
-    uploaded_contract_clause: "The Parties agree that all work created by the Consultant in terms of him/her performing the services will remain the exclusive property of the Client, who can use it without any restrictions."
-    template_contract_clause: "All deliverables and work products created by the Consultant in connection with the services shall be the sole and exclusive property of the Client. The Consultant hereby assigns to the Client all rights, title, and interest in and to such deliverables and work products, including all intellectual property rights therein."
     desired_terms: "All deliverables and work products created by the Consultant in connection with the services shall be the sole and exclusive property of the Client."
 ---
 system:
