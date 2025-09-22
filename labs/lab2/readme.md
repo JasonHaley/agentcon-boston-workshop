@@ -42,14 +42,22 @@ class SearchPlugin:
         if not uploaded_contract_clause:
             return "No matching clause found in the uploaded document. Please try another clause."
         return uploaded_contract_clause.text_full
+
+    @kernel_function(name="search_for_clause_in_template", description="Search for a clause in the template based on the search text and return the full clause text.")
+    async def search_for_clause_in_template(self, search_text: str) -> str:
+        print(f"Searching for clause in template with search text: {search_text}")
+
+        template_clause = await self.search_service.search_single_hybrid(query=search_text, filter=f"is_template eq true")
+        if not template_clause:
+            return "No matching clause found in the template. Please try another clause."
+        return template_clause.text_full
 ```
-This logic create a plugin class, which uses the search_service to do the work. There is only one method right now `search_for_clause_in_uploaded_contract`. This method is marked for semantic kernel to recognize it as a plugin. If you take a look at the contents, it simply wraps a call to the search_service to make a hybrid search. This will allow us to search for a contract clause by either keyword or semantic meaning and return the most relevant one.
+This logic create a plugin class, which uses the search_service to do the work. There is only two methods right now `search_for_clause_in_uploaded_contract` and `search_for_clause_in_template`. These methods are marked for semantic kernel to recognize them as a plugins. If you take a look at the contents, they wrap a calls to the search_service to make a hybrid search. This will allow us to search for a contract clause by either keyword or semantic meaning and return the most relevant one.
 
 ## Create an ChatCompletionAgent
 1. In VS Code, find the **agents** folder and add a new file named **compare_clause_agent.py**
 2. Add the following at the top of that file:
 ```
-from azure.identity import DefaultAzureCredential
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
@@ -67,7 +75,7 @@ def get_compare_clause_agent(processor: DocumentProcessor) -> ChatCompletionAgen
     })
 
     agent = ChatCompletionAgent(
-        service=AzureChatCompletion(credential=DefaultAzureCredential()),
+        service=AzureChatCompletion(),
         name="compare_contract",
         description="Compare the entire uploaded contract with the template and highlight any differences.",
         instructions=instructions,

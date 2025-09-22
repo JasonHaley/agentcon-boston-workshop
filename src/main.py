@@ -7,6 +7,9 @@ from semantic_kernel.agents import ChatCompletionAgent, AgentThread
 
 # TODO: Add document_processor import here
 # TODO: Add the get_compare_clause_agent import here
+# TODO: Add the get_analyze_clause_agent import here
+# TODO: Add the get_compare_contract_agent import here
+# TODO: Add the get_assistant_agent import here
 
 load_dotenv()
 
