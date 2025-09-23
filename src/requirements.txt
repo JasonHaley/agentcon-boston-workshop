@@ -8,6 +8,7 @@ langchain
 openai
 pathlib
 prompty
+python-docx
 python-dotenv
 semantic-kernel
 tenacity

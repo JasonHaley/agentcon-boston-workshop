@@ -9,6 +9,7 @@ from langchain.text_splitter import MarkdownHeaderTextSplitter
 from models.document import File
 from models.clause import Clause
 from services.document_intelligence import DocumentIntelligenceService
+from services.document_service import DocumentService
 from services.embedding_service import EmbeddingService
 from services.prompt_service import PromptyService
 from services.search_service import SearchService
@@ -43,21 +44,15 @@ class DocumentProcessor:
         embedding_service: Optional[EmbeddingService] = None,
         search_service: Optional[SearchService] = None,
         prompt_service: Optional[PromptyService] = None,
+        document_service: Optional[DocumentService] = None,
         headers_to_split_on: Optional[List[tuple]] = None
     ):
-        """Initialize with services and configuration.
-        
-        Args:
-            doc_intelligence: Service for document parsing
-            embedding_service: Service for creating embeddings
-            search_service: Service for indexing clauses
-            headers_to_split_on: Custom headers for splitting (uses defaults if None)
-        """
+        """Initialize the DocumentProcessor with necessary services and configurations."""
         self.doc_intelligence = doc_intelligence or DocumentIntelligenceService()
         self.embedding_service = embedding_service or EmbeddingService()
         self.search_service = search_service or SearchService(self.embedding_service)
         self.prompt_service = prompt_service or PromptyService()
-        
+        self.document_service = document_service or DocumentService()
         self.logger = logging.getLogger(__name__)
         
         # TODO: Initialize text splitter

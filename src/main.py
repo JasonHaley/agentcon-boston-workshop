@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from typing import List
 
-from semantic_kernel.agents import ChatCompletionAgent, AgentThread
+from semantic_kernel.agents import ChatCompletionAgent, ChatHistoryAgentThread
 
 # TODO: Add document_processor import here
 # TODO: Add the get_compare_clause_agent import here
@@ -31,9 +31,7 @@ async def on_message(message: cl.Message):
     if message.elements:
         await cl.Message(content="Processing your uploaded files...").send()
         await process_files(message.elements)
-    else:
-        await cl.Message(content="No files uploaded. Please attach a file using the paperclip icon.").send()
-
+    
 
 async def process_files(files: List[cl.File]):
     """Process uploaded files."""
