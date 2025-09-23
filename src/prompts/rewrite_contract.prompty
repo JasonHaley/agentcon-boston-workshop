@@ -26,8 +26,6 @@ and the following analysis to produce a rewritten contract.
 ## Context
 {desired_terms}
 
-Analysis:
-{analysis}
 
 ## Instructions
 ## Phase 2: Rewrite Instructions

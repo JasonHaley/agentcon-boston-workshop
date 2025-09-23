@@ -174,6 +174,9 @@ def classify_clause_heading(heading: str, default: Optional[str] = None) -> Opti
         # Only return 'term' if 'termination' wasn't present
         return "term"
 
-   # TODO: Apply rules to classify heading
+    for ctype, patterns in RULES:
+        for pat in patterns:
+            if pat.search(h):
+                return ctype
 
     return default

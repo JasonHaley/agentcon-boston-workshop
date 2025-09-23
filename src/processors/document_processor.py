@@ -55,7 +55,12 @@ class DocumentProcessor:
         self.document_service = document_service or DocumentService()
         self.logger = logging.getLogger(__name__)
         
-        # TODO: Initialize text splitter
+        # Initialize text splitter
+        headers = headers_to_split_on or self.DEFAULT_HEADERS
+        self.markdown_splitter = MarkdownHeaderTextSplitter(
+            headers_to_split_on=headers,
+            strip_headers=True
+        )
                 
         # Load stopwords once during initialization
         self._load_stopwords()
@@ -106,11 +111,18 @@ class DocumentProcessor:
         self.logger.info(f"Starting processing: {filename}")
         
         try:
-            # TODO: Parse document into pages
+            # Parse document into pages
+            pages = await self._extract_pages(file, filename)
+            if not pages:
+                raise ValueError(f"No pages extracted from {filename}")
             
-            # TODO: Combine all page text
+            # Combine all page text
+            full_text = self._combine_page_text(pages)
                         
-            # TODO: Split into chunks and create clauses
+            clauses = await self._create_clauses(full_text, filename)
+            if not clauses:
+                self.logger.warning(f"No clauses created for {filename}")
+                return self._create_stats(filename, pages, full_text, [], [])
                         
             await self._index_clauses(clauses)
 
@@ -179,7 +191,7 @@ class DocumentProcessor:
             section_index=chunk_index,
             section=section_header,
             text_full=chunk.page_content,
-            # TODO: populate clean text properly
+            text_clean=clean_text(chunk.page_content, self.stopwords),
             entity_type="clause" if clause_type else "",
             clause_type=clause_type or "",
             is_template=self._is_template_file(filename)
@@ -188,7 +200,9 @@ class DocumentProcessor:
     def _extract_section_header(self, metadata: dict) -> str:
         """Extract the most specific header from chunk metadata."""
         return (
-            # TODO: Extract actual header from metadata
+            metadata.get("Header 3") or 
+            metadata.get("Header 2") or 
+            metadata.get("Header 1") or 
             "Unknown"
         )
     
@@ -202,10 +216,10 @@ class DocumentProcessor:
         texts = [clause.text_clean for clause in clauses]
         
         # Create embeddings
-        # TODO create embeddings
+        embeddings = await self.embedding_service.create_embeddings(texts)
         
         # Upload to search index
-        # TODO upload to search index
+        await self.search_service.upload_clauses(clauses, embeddings)
         
         self.logger.info(f"Successfully indexed {len(clauses)} clauses")
     
