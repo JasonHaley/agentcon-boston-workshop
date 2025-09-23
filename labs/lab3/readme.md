@@ -79,7 +79,7 @@ Provide specific, actionable next steps prioritized by urgency.
 
 As you can see this prompt is pretty close to the previous prompt. Feel free to modify it and experiment with it doing things differently.
 
-2. in the **agents** folder, create a new file named `analyze_clause_agent.py` and add the following to that file:
+2. in the **agents** folder, create a new file named **analyze_clause_agent.py** and add the following to that file:
 ```
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
@@ -158,7 +158,7 @@ The steps for this agents are about the same as the previous agent, except we fi
 
 1. Open the `SearchPlugin.py` file and add these two methods to the end:
 ```
-    @kernel_function(name="get_all_clauses_in_uploaded_contract", description="Get all clauses in the uploaded contract and return the full clause texts.")
+    @kernel_function(name="get_all_clauses_in_uploaded_contract", description="Get the complete uploaded contract.")
     async def get_all_clauses_in_uploaded_contract(self, uploaded_contract_filename: str) -> str:
         print(f"Getting all clauses in uploaded contract: {uploaded_contract_filename}")
 
@@ -167,9 +167,9 @@ The steps for this agents are about the same as the previous agent, except we fi
             return "No clauses found in the uploaded document."
         return "\n\n".join([f"{clause.clause_type}: {clause.text_full}" for clause in clauses])
     
-    @kernel_function(name="get_all_template_contract_clauses", description="Get all clauses in the template and return the full clause texts.")
-    async def get_all_template_contract_clauses(self) -> str:
-        print(f"Getting all template contract clauses")
+    @kernel_function(name="get_all_clauses_in_template_contract", description="Get the complete template contract.")
+    async def get_all_clauses_in_template_contract(self) -> str:
+        print(f"Getting all clauses in template contract")
 
         clauses = await self.search_service.search_clauses_by_filter(filter=f"is_template eq true")
         if not clauses or len(clauses) == 0:
@@ -377,3 +377,4 @@ chainlit run main.py
 You should now be able to click on any of the starter buttons to use the different agents.
 
 ![Compare Contract Result2](assets/lab3-img5.png)
+
