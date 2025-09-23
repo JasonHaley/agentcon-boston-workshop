@@ -2,28 +2,28 @@
 
 ## Learning Objectives
 
-1. Create a Search Plugin for our agent to retrieve contract clauses from the Search index
-2. Create an ChatCompletionAgent
+1. Create a Search Plugin to retrieve contract clauses from the search index
+2. Create an ChatCompletionAgent agent
 3. Wire it up to Chainlit
 
 ## Prerequisites
 
 1. Lab 0 is required to have the development environment configured and all dependencies installed
-2. If you've got a populated Azure AI Search index, Lab 1 is optional. However this lab was designed to follow Lab 1.
+2. If you've got a populated Azure AI Search index, Lab 1 is optional. However this lab was designed to follow Lab 1
 
-## What type of Agents?
+## What type of agents are we working with?
 
-In the remaining labs we will be utilizing [Semantic Kernel](https://github.com/microsoft/semantic-kernel/) for an agent framework. The [documentation](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/?pivots=programming-language-python) and [source code](https://github.com/microsoft/semantic-kernel/tree/main/python/samples/getting_started_with_agents) for Semantic Kernel give you a lot of tools to use. For this workshop we will mainly be using the [ChatCompletionAgent](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-types/chat-completion-agent?pivots=programming-language-python). As you'll see, you can do quite a bit with just this one agent type and plugins. The [Agent Architecture](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture?pivots=programming-language-python) page covers what we need to implement our use cases.
+In the remaining labs we will be utilizing [Semantic Kernel](https://github.com/microsoft/semantic-kernel/) for an agent framework. The [documentation](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/?pivots=programming-language-python) and [source code](https://github.com/microsoft/semantic-kernel/tree/main/python/samples/getting_started_with_agents) for Semantic Kernel give you a lot of tools to use. For this workshop we will mainly be using the [ChatCompletionAgent](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-types/chat-completion-agent?pivots=programming-language-python). As you'll see, you can do quite a bit with just this one agent type and some plugins. The [Agent Architecture](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture?pivots=programming-language-python) page gives some background to what we'll be using.
 
  What we will need for this first agent:
 - a **prompt** - we'll use a prompty template to store the instructions we'll give the agent
-- an **LLM** api to call
+- an **LLM** chat api to call
 - a **plugin** (aka a tool) that will interact with the Azure AI Search service
 - wire up to Chainlit for an orchestrator of sorts
 
-## Create a Search Plugin for our agent to retrieve contract clauses from the Search index
+## Create a Search Plugin to retrieve contract clauses from the search index
 
-1. In VS Code, add an **agents** folder to the src folder and create a subfolder named **plugins**. 
+1. In VS Code, add an **agents** folder to the **src** folder and create a subfolder named **plugins**. 
 2. Create a new file named **search_plugin.py** in that folder and add the following contents to that file:
 ```
 from semantic_kernel.functions import kernel_function
@@ -34,7 +34,7 @@ class SearchPlugin:
     def __init__(self, search_service):
         self.search_service = search_service
 
-    @kernel_function(name="search_for_clause_in_uploadedcontract", description="Search for a clause in the uploaded contract based on the search text and return the full clause text.")
+    @kernel_function(name="search_for_clause_in_uploaded_contract", description="Search for a clause in the uploaded contract based on the search text and return the full clause text.")
     async def search_for_clause_in_uploaded_contract(self, search_text: str, uploaded_contract_filename: str) -> str:
         print(f"Searching for clause in uploaded contract: {uploaded_contract_filename} with search text: {search_text}")
 
@@ -43,8 +43,8 @@ class SearchPlugin:
             return "No matching clause found in the uploaded document. Please try another clause."
         return uploaded_contract_clause.text_full
 
-    @kernel_function(name="search_for_clause_in_template", description="Search for a clause in the template based on the search text and return the full clause text.")
-    async def search_for_clause_in_template(self, search_text: str) -> str:
+    @kernel_function(name="search_for_clause_in_template_contract", description="Search for a clause in the template based on the search text and return the full clause text.")
+    async def search_for_clause_in_template_contract(self, search_text: str) -> str:
         print(f"Searching for clause in template with search text: {search_text}")
 
         template_clause = await self.search_service.search_single_hybrid(query=search_text, filter=f"is_template eq true")
@@ -52,9 +52,9 @@ class SearchPlugin:
             return "No matching clause found in the template. Please try another clause."
         return template_clause.text_full
 ```
-This logic create a plugin class, which uses the search_service to do the work. There is only two methods right now `search_for_clause_in_uploaded_contract` and `search_for_clause_in_template`. These methods are marked for semantic kernel to recognize them as a plugins. If you take a look at the contents, they wrap a calls to the search_service to make a hybrid search. This will allow us to search for a contract clause by either keyword or semantic meaning and return the most relevant one.
+This logic defines a plugin class, which uses the `search_service` to do the work. There are only two methods right now `search_for_clause_in_uploaded_contract` and `search_for_clause_in_template_contract`. These methods are marked for semantic kernel to recognize them as a plugins with the `@kernel_function`. If you take a look at the contents, they wrap calls to the `search_service` to make a hybrid search. This will allow us to search for a contract clause by keyword and semantic meaning then return the most relevant one.
 
-## Create an ChatCompletionAgent
+## Create an ChatCompletionAgent agent
 1. In VS Code, find the **agents** folder and add a new file named **compare_clause_agent.py**
 2. Add the following at the top of that file:
 ```
@@ -69,21 +69,21 @@ Thes are the imports we'll need.
 3. Next add the following:
 ```
 def get_compare_clause_agent(processor: DocumentProcessor) -> ChatCompletionAgent:
-    compare_prompt = processor.prompt_service.load_prompt("compare_contract.prompty")
-    instructions = processor.prompt_service.render_prompt_as_string(compare_prompt, {
+    compare_clause = processor.prompt_service.load_prompt("compare_clause.prompty")
+    instructions = processor.prompt_service.render_prompt_as_string(compare_clause, {
         "desired_terms": processor.desired_terms,
     })
 
     agent = ChatCompletionAgent(
         service=AzureChatCompletion(),
-        name="compare_contract",
+        name="compare_clause",
         description="Compare the entire uploaded contract with the template and highlight any differences.",
         instructions=instructions,
         plugins=[SearchPlugin(processor.search_service)],
     )
     return agent
 ```
-This code first loads the `compare_contract.prompty` file from the **prompts** folder. Feel free to take a look at it and modify it however you want. The prompt is shown below:
+This code first loads the `compare_clause.prompty` file from the **prompts** folder. Feel free to take a look at it and modify it however you want. The prompt is shown below:
 
 ```
 ---
@@ -185,8 +185,6 @@ async def on_message(message: cl.Message):
     if message.elements:
         await cl.Message(content="Processing your uploaded files...").send()
         await process_files(message.elements)
-    else:
-        await cl.Message(content="No files uploaded. Please attach a file using the paperclip icon.").send()
 
     current_filename = cl.user_session.get("filename", "sample-01.pdf") # Hardcoded for debugging
     
@@ -199,7 +197,7 @@ async def on_message(message: cl.Message):
         message=message
     )
 
-async def stream_agent_response(agent: ChatCompletionAgent, thread: AgentThread, answer: cl.Message, message: str):
+async def stream_agent_response(agent: ChatCompletionAgent, thread: ChatHistoryAgentThread, answer: cl.Message, message: str):
     """Stream the agent's response."""
 
     async for response in agent.invoke_stream(messages=message, thread=thread):
@@ -212,8 +210,8 @@ async def stream_agent_response(agent: ChatCompletionAgent, thread: AgentThread,
     cl.user_session.set("thread", thread)
     await answer.send()
 ```
-This added a few things:
-- setting of the agent and thread variables from teh session if they exist
+This adds a few things to what was there:
+- setting of the agent and thread variables from the session, if they exist
 - created a variable `current_filename` for debugging, this is so you don't have to keep uploading the same file later
 - setting of the **message** variable for the agent
 - added the streaming messages from the agent
