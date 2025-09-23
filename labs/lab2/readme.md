@@ -188,8 +188,11 @@ async def on_message(message: cl.Message):
 
     current_filename = cl.user_session.get("filename", "sample-01.pdf") # Hardcoded for debugging
     
-    message = f"Using your plugins and the uploaded contract {current_filename}, perform the following: {message.content}"
-    
+    if not thread:
+        message = f"Using your plugins to retrieve the template contract and the uploaded contract using the file name: {current_filename}, perform the following: {message.content}"
+    else:
+        message = message.content
+
     await stream_agent_response(
         agent=agent, 
         thread=thread, 

@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from typing import List
 
 from semantic_kernel.agents import ChatCompletionAgent, ChatHistoryAgentThread
+# TODO: Add kernel_function import here
 
 # TODO: Add document_processor import here
 # TODO: Add the get_compare_clause_agent import here
@@ -16,6 +17,8 @@ load_dotenv()
 # TODO: Initialize your document processor here
 
 # TODO: Add starters
+
+# TODO: Add CreateFileDownloadPlugin here
 
 @cl.on_chat_start
 async def on_chat_start():
