@@ -34,27 +34,27 @@ In order for this workshop not to be the specifics about how to implement a RAG 
 
 ## Parse a pdf contract file using Azure AI Document Intelligence
 
-1. Open the src/processors/**document_processor.py** file in VS Code
-2. Locate the **process_file** method (should start around line 98) and find the comment `# TODO: Parse document into pages`. Replace it with the following:
+1. Open the **src/processors/document_processor.py** file in VS Code
+2. Locate the **process_file** method (should start around line 93) and find the comment `# TODO: Parse document into pages`. Replace it with the following:
 ```
             # Parse document into pages
             pages = await self._extract_pages(file, filename)
             if not pages:
                 raise ValueError(f"No pages extracted from {filename}")
 ```
-This code has the internal method (right below the process_file method) _extract_pages, use the doc_intelligence service to parse the uploaded pdf and return a list of the Page class (in the models/document.py file).
+This code has the internal method (right below the `process_file` method) `_extract_pages`, that uses the doc intelligence service to parse the uploaded pdf and return a list of the Page class (in the **models/document.py** file).
 
-The bulk of the work is performed by the DocumentIntelligenceService parse_document method (shown below):
+The bulk of the work is performed by the `DocumentIntelligenceService` `parse_document` method (shown below):
 ![Parse Document](assets/lab1-img2.png)
 
-As you can see, the document is set to be parse as markdown, then due to the way the DocumentIntelligence SDK works, you need to await a poller.result() to know when the anaysis is complete. Once the result is returned, the pages are enumerated the Page model is populated with the text and offsets.
+As you can see, the document is set to be parse as markdown, then due to the way the DocumentIntelligence SDK works, you need to await a poller.result() to know when the anaysis is complete. Once the result is returned, the pages are enumerated and the Page model is populated with the text and offsets of the pdf pages.
 
 3. Back in the **process_file** method, find the comment `# TODO: Combine all page text` and replace it with the following:
 ```
             # Combine all page text
             full_text = self._combine_page_text(pages)
 ```
-This code uses the interal method _combine_page_text to aggregate all the text in the document into the `full_text` variable.
+This code uses the interal method `_combine_page_text` to aggregate all the text in the document into the `full_text` variable.
 
 Now we have all the text from the pdf.
 
@@ -70,7 +70,7 @@ Now we have all the text from the pdf.
 
 ## Use LangChain to split the file into clauses
 
-LangChain has a great text splitter that will take the PDF text and create chunks broken on the headings for us: [MarkdownHeaderTextSplitter](https://python.langchain.com/docs/how_to/markdown_header_metadata_splitter/)
+LangChain has a great text splitter that will take the text we extracted from the PDF and create chunks split on the headings for us: [MarkdownHeaderTextSplitter](https://python.langchain.com/docs/how_to/markdown_header_metadata_splitter/)
 
 1. In the **document_processor.py** file, around line 34, you can see the constant `DEFAULT_HEADERS` defined:
 
@@ -91,7 +91,7 @@ This instantiates the splitter, sets the heading levels and indicates the sectio
 
 > **Question**: Why am I removing the header text from the chunks?
 > 
-> **Answer**: This has to do with knowing the data and how we want it to be useful for retrieval. The system is going to work with clauses of the contract, we don't need the heading in that clause - so we will use it as metadata instead.
+> **Answer**: This has to do with knowing the data and how to make it useful for retrieval. The system is going to work with clauses of the contract, we don't need the heading in that clause - so we will use it as metadata instead.
 
 3. Again navigate to the **process_file** method and locate the comment `# TODO: Split into chunks and create clauses` and replace it with this:
 ```
@@ -100,25 +100,25 @@ This instantiates the splitter, sets the heading levels and indicates the sectio
                 self.logger.warning(f"No clauses created for {filename}")
                 return self._create_stats(filename, pages, full_text, [], [])
 ```
-This code uses the internal method `_create_clauses` which splits the `full_text` using the markdown splitter, then uses another internal method `_create_single_clause` which populates a `Clause` model. This is also the method that populates useful metadata on the Clause model. The result ends up being a list of clauses along with meaningful metadata.
+This code uses the internal method `_create_clauses` which splits the `full_text` using the markdown splitter, then uses another internal method `_create_single_clause` to  populate a `Clause` model. This is also the method that populates useful metadata on the Clause model. The result ends up being a list of clauses along with meaningful metadata.
 
 ![_create_clasues](assets/lab1-img4.png)
 
 ## Create metadata about the clauses and remove legal stop words
 
-So far the PDF has been parsed as markdown and split into the contract clauses using the markdown splitter. Next what can we do in addition to just having the text chunk from pdf to help our retrieval system?
+So far the PDF has been parsed as markdown and split into the contract clauses using the markdown splitter. Now what can we do in addition to just having the text chunk from pdf to help our retrieval system?
 
 ### Metadata
-Metadata we can use and get from the content and context of the chunks:
+Using the content and context of the chunks, we can get :
 - headings
-- use the heading to categorize the clause
-- index of the clause
+- use the heading to create clause category
+- index/order of the clause
 - indicate if it is a template file or not
 
 ### Stop words
-Another technique we can use, is the removal of legal stop words from the pdf text chunk before we calculate embeddings on the text. Stop words are common words that occur often but carry very little substantive information, removing them should "sharpen" the effectiveness of our embedding for the retrieval system.
+Another technique we can use is the removal of legal stop words from the pdf text chunk before we calculate embeddings on the text. Stop words are common words that occur often but carry very little substantive information. Removing them should "sharpen" the effectiveness of our embeddings for the retrieval system.
 
-> NOTE: we could also add the section headings to the "clean_text" to add more signal to our embedding - however I'll leave this as an exercise to the user to try out.
+> NOTE: we could also add the section headings to the "clean_text" to add more signal to our embedding - however I'll leave this as an exercise to the user.
 
 1. In the **document_processor.py** file, find the comment `# TODO: Extract actual header from metadata` in the `_extract_section_header` method and replace it with the following:
 ```
@@ -126,7 +126,7 @@ Another technique we can use, is the removal of legal stop words from the pdf te
             metadata.get("Header 2") or 
             metadata.get("Header 1") or 
 ```
-The LangChain markdown splitter gives us a metadata dictionary that has the headers showing where the text chunk is nested. We want to use the first heading up - which most likely will be an level 2 heading but in some cases Document Intelligence is throwing in a level 3 heading. Now that we have the heading for the clause, we want to categorize it.
+The LangChain markdown splitter gives us a metadata dictionary that has the headers for the markdown chunk, showing where the text chunk is nested. We want to use the lowest heading - which most likely will be an level 2 heading but in some cases Document Intelligence is throwing in a level 3 heading. Now that we have the heading for the clause, we want to categorize it.
 
 2. Find the **clause_classifier.py** file in the **utils** directory and open in.
 
@@ -153,7 +153,7 @@ This code finishes up the `classify_clause_heading` method which has 3 steps in 
 ```
             text_clean=clean_text(chunk.page_content, self.stopwords),
 ```
-This line uses the `clean_text` method to remove the stopword from the text chunk from the pdf. This should improve the retrieval by cutting down some of the noise in the text.
+This line uses the `clean_text` method to remove the stopwords from the text extracted from the pdf. This should improve the retrieval by removing some words that don't add to the meaning.
 
 Next, let's create those embeddings.
 
@@ -171,13 +171,13 @@ This takes that `text_clean` field from all the clauses and makes batch calls to
 ```
         await self.search_service.upload_clauses(clauses, embeddings)
 ```
-This takes the clauses and those embeddings and does a batch update to the search index.
+This takes the clauses and embeddings and does a batch update to the search index.
 
 By this time, I"m sure you are getting impatient and want to get to the agent stuff right? Almost there - one last thing.
 
 ## Wire up Chainlit to test
 
-Now lets wire up the Chainlit UI logic and upload those sample files.
+Now lets wire up the Chainlit UI logic and upload the template contract PDF.
 
 1. Open the **main.py** file (in the **src** directory), and locate the comment `# TODO: Add document_processor import here` toward the top and replace it with:
 ```
@@ -189,7 +189,7 @@ from processors.document_processor import DocumentProcessor
 processor = DocumentProcessor()
 ```
 
-3. Finally, find the comment '# TODO: Add file processing logic here` in the `process_files` method and add the following to perform the file uploading and ingestion:
+3. Finally, find the comment `# TODO: Add file processing logic here` in the `process_files` method and add the following to perform the file uploading and ingestion:
 ```
     if len(files) > 1:
         await cl.Message(content="Only one file is supported at a time. Please upload a single file.").send()

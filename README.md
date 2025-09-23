@@ -38,7 +38,7 @@ Please install the software ahead of the workshop:
 | Lab 1 - Processing PDFs to be useful in RAG | [Link](./labs/lab1/readme.md) |
 | Lab 2 - Create your first agent             | [Link](./labs/lab2/readme.md) |
 | Lab 3 - Refactor to use multiple agents     | [Link](./labs/lab3/readme.md) |
-| Lab 4 - Doc Gen with MCP                    | [Link](./labs/lab4/readme.md) |
+| Lab 4 - Doc Gen with a plugin               | [Link](./labs/lab4/readme.md) |
 
 ## Contributors
 
@@ -49,4 +49,5 @@ Jason is an independent Full Stack Solution Architect with a deep focus on Azure
 [LinkedIn](https://www.linkedin.com/in/jason-a-haley/) | [Twitter](https://x.com/haleyjason) | [Jason's Blog](https://jasonhaley.com/) | [Email](mailto://info@jasonhaley.com)
 
 ## Other Resources
-- [azure-search-openai-demo](https://github.com/azure-Samples/azure-search-openai-demo/) is an open source RAG sample. A lot of the embedding service and saerch service logice was inspired from this project.
+- [azure-search-openai-demo](https://github.com/azure-Samples/azure-search-openai-demo/) is an open source RAG sample. A lot of the embedding service and saerch service logic was modeled after this project.
+- [Office-Word-MCP-Server](https://github.com/GongRzhe/Office-Word-MCP-Server) is an open source MCP server for creating docx files. A lot of the document service logic is modeled after this project.
