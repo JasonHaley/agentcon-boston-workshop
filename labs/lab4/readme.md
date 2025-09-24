@@ -61,7 +61,7 @@ This provides a plugin to wrap the `document_service` functionality to provide t
 ## Create agents for a two phase process
 
 We now want to create two agents:
-- an agent that analyzes the uploaded contract and the template to determine what should modified
+- an agent that analyzes the uploaded contract and the template contract to determine what should modified
 - an agent that uses the `DocGenPlugin` to create the document, then provide a download link to download the new contract
 
 We'll define both in the same file.
@@ -78,7 +78,7 @@ from processors.document_processor import DocumentProcessor
 
 def get_rewrite_analysis_agent(processor: DocumentProcessor, kernel: Kernel) -> ChatCompletionAgent:
 
-    rewrite_analysis_prompt = processor.prompt_service.load_prompt("rewrite_contract_analysis.prompty")
+    rewrite_analysis_prompt = processor.prompt_service.load_prompt("rewrite_analysis.prompty")
     instructions = processor.prompt_service.render_prompt_as_string(rewrite_analysis_prompt, {
         "desired_terms": processor.desired_terms,
     })
@@ -95,7 +95,7 @@ def get_rewrite_analysis_agent(processor: DocumentProcessor, kernel: Kernel) -> 
 
 def get_rewrite_contract_agent(processor: DocumentProcessor, kernel: Kernel) -> ChatCompletionAgent:
 
-    rewrite_rewrite_prompt = processor.prompt_service.load_prompt("rewrite_contract_rewrite.prompty")
+    rewrite_rewrite_prompt = processor.prompt_service.load_prompt("rewrite_contract.prompty")
     instructions = processor.prompt_service.render_prompt_as_string(rewrite_rewrite_prompt, {
         "desired_terms": processor.desired_terms,
     })
@@ -146,13 +146,13 @@ def get_assistant_agent(processor: DocumentProcessor) -> ChatCompletionAgent:
 ```
 The following items changed:
 - added an import for `Kernel`
-- added imports for `get_rewrite_analysis_agent, `get_rewrite_contract_agent`
-- created a Kernel instance to share bewteen the rewrite agents
-- added `analysis_agent` and 'rewrite_agent' to the list of plugins
+- added imports for `get_rewrite_analysis_agent`, `get_rewrite_contract_agent`
+- created a `Kernel` instance to share bewteen the two differnt phase agents
+- added `analysis_agent` and `rewrite_agent` to the list of plugins
 
 ## Wire up Chainlit to test
 
-1. In **main.py**, find the comment toward the top '# TODO: Add kernel_function import here' and replace it with the following:
+1. In **main.py**, find the comment toward the top `# TODO: Add kernel_function import here` and replace it with the following:
 ```python
 from semantic_kernel.functions import kernel_function
 ``` 
@@ -201,17 +201,15 @@ The system will use this once the contract file has been created.
         cl.Starter(
             label="Rewrite Contract",
             message="Analyze the uploaded contract with the template contract and rewrite a new version of the contract that combines the best clauses from both contracts into a new contract."
-        )
+        ),
     ]
 ```
-This will add a button for the "Rewrite Contract"
+This will add a button for the **Rewrite Contract**
 
-4. Replace the line with to `get_assistant_agent` to the following:
+4. Add a line below `agent = get_assistant_agent(processor)` to add the plugin to the `kernel`:
 ```python
-    agent = get_assistant_agent(processor)
     agent.kernel.add_plugin(CreateFileDownloadPlugin(cl.Message(content="")))
 ```
-Notice this adds the file download plugin to the kernel Chainlit is keeping track of.
 
 5. Run it in the debugger or from the terminal:
 
@@ -220,20 +218,30 @@ Notice this adds the file download plugin to the kernel Chainlit is keeping trac
 ```shell
 chainlit run main.py
 ```
-Click on the "Rewrite Contract" starter button to test the functionality
+Click on the **Rewrite Contract** starter button to test the functionality
 
 ![Rewrite Contract](assets/lab4-img4.png)
 
-You should see the plugin activity show and a link to download the file:
+You should see the agent and plugin activity show and eventually a link to download the file:
 
 ![Download File](assets/lab4-img2.png)
-
-### Known Issue
-If you see the output get *stuck* like this:
-![Download File](assets/lab4-img1.png)
-
-Type **continue** and click the **send** button. This should get it going again.
 
 Once the download link shows, you should be able to open the Word document (assuming you have an application that will open a .docx file).
 
 ![Rewritten Contract](assets/lab4-img3.png)
+
+Congratulations you have completed the workshop!
+
+### Known Issue
+If you see the output get *stuck* like this:
+![Stuck](assets/lab4-img1.png)
+
+Type **continue** and click the **send** button. This should get it going again.
+
+![Continue](assets/lab4-img5.png)
+
+ ... and will probably get stuck another time or two. Keep encouraging it with **continue** and it will eventually complete.
+
+![Continue again](assets/lab4-img6.png)
+
+> NOTE: I'm working on tracking down the fix for this. If you happen to know how to fix it - submit a PR and I'll get the fix integrated.
