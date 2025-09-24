@@ -175,8 +175,9 @@ from agents.compare_clause_agent import get_compare_clause_agent
 ```
 This creates an instance of the agent we just defined and wires it up to Chainlit to be used when you interact with Chainlit
 
-3. Later in the **main.py** file, look for the comment `on_message` method and replace it with the following:
+3. Later in the **main.py** file, look for the comment `on_message` method and replace it with the following (make sure you replace the full method including the @cl.on_message decorator):
 ```
+@cl.on_message
 async def on_message(message: cl.Message):
     """Handle incoming messages."""
     agent = cl.user_session.get("agent")
