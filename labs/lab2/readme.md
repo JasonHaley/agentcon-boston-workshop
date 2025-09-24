@@ -3,7 +3,7 @@
 ## Learning Objectives
 
 1. Create a Search Plugin to retrieve contract clauses from the search index
-2. Create an ChatCompletionAgent agent
+2. Create a ChatCompletionAgent agent
 3. Wire it up to Chainlit
 
 ## Prerequisites
@@ -16,10 +16,9 @@
 In the remaining labs we will be utilizing [Semantic Kernel](https://github.com/microsoft/semantic-kernel/) for an agent framework. The [documentation](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/?pivots=programming-language-python) and [source code](https://github.com/microsoft/semantic-kernel/tree/main/python/samples/getting_started_with_agents) for Semantic Kernel give you a lot of tools to use. For this workshop we will mainly be using the [ChatCompletionAgent](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-types/chat-completion-agent?pivots=programming-language-python). As you'll see, you can do quite a bit with just this one agent type and some plugins. The [Agent Architecture](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture?pivots=programming-language-python) page gives some background to what we'll be using.
 
  What we will need for this first agent:
-- a **prompt** - we'll use a prompty template to store the instructions we'll give the agent
+- a **prompt** - we'll use a [prompty](https://prompty.ai/welcome/) template to store the instructions we'll give the agent
 - an **LLM** chat api to call
-- a **plugin** (aka a tool) that will interact with the Azure AI Search service
-- wire up to Chainlit for an orchestrator of sorts
+- a **plugin** (aka tool) to interact with the Azure AI Search service
 
 ## Create a Search Plugin to retrieve contract clauses from the search index
 
@@ -150,6 +149,8 @@ Provide specific, actionable next steps prioritized by urgency.
 - Be specific and actionable in findings
 ```
 
+> NOTE: One of the reasons to use Prompty for the prompts is the [VS Code extension](https://prompty.ai/guides/extension/) that allows you to run the prompt from VS Code to see what it will produce
+
 The prompt has one argument `desired_terms`, which we load in a reference file that has a listing of all the contract terms we prefer (again, feel free to make this file your own). 
 
 The rest of the code declares the `ChatCompletionAgent` agent, sets the LLM to be the `AzureChatCompletion()`, gives it a name, description, the instructions from above and adds the `SearchPlugin` for the agent to use.
@@ -238,7 +239,7 @@ You are now ready to test it.
 
 1. You have two choices here: run it in the debugger or just run it from the terminal:
 
-- To run from the debugger, Go to Run menu -> Start debugging
+- To run from the debugger, Go to Run menu -> Start debugging (**NOTE:** after the debugger starts verify it is using the virtual environment. You may need to stop, activate, then restart the debugger for the first time.)
 - To run from command line, run
 ```
 chainlit run main.py
