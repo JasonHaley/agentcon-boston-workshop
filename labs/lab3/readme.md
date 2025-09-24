@@ -307,7 +307,7 @@ This will make it easy to test.
 
 ```
 
-7. You have two choices here: run it in the debugger or just run it from the terminal:
+7. Run it in the debugger or from the terminal:
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
@@ -322,13 +322,13 @@ This will analayze the sample contract with the template contract and desired te
 
 ![Compare Contract Result](assets/lab3-img4.png)
 
-We now have three agents but can only use one at a time ... so let's change that so any of them can be used.
+We have three agents but can only use one at a time ... now let's change it so any of them can be used.
 
-## Create an assistant agent to use all the agents you've created
+## Create an agent to use all the agents you've created
 
-One of the neat things about the `ChatCompletionAgent` is it can use other agents as plugins. So next we'll create an assistant agent that uses the other agents as plugins and can decide which on to have do the work.
+One of the neat things about the `ChatCompletionAgent` is it can use other agents as plugins. So next we'll create an *assistant* agent that uses the other agents as plugins and can decide which on to have do the work.
 
-For this agent, we only need some general instructions - no prompty prompt needed.
+For this agent, we only need some general instructions - no prompt needed.
 
 1. In the **agents** folder, create a new file named **assistant_agent.py** and add the following to it:
 ```
@@ -378,3 +378,6 @@ You should now be able to click on any of the starter buttons to use the differe
 
 ![Compare Contract Result2](assets/lab3-img5.png)
 
+Next we will add the ability to create a new version of a contract.
+
+## [Go to Lab 4 >](../lab4/readme.md)
