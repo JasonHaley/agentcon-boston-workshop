@@ -6,18 +6,21 @@ This repository contains the instructions and code for the 90 minute workshop.
 
 This workshop uses an [AI Scenario](https://adoption.microsoft.com/en-us/scenario-library/) to help set the stage with a business domain and desired functionality: [Using AI Agents to create a contract review agent](https://adoption.microsoft.com/en-us/scenario-library/legal/automated-contract-review-agent/). 
 
-> NOTE: Since a lot of the matrial on that site is geared toward using Copilot, I need to mention I have only used the requirements as inspiration in this workshop, **we do not use Copilot in this solution**
+> NOTE: Since a lot of the material on that site is geared toward using Copilot, I need to mention I have only used the requirements as inspiration in this workshop, **we do not use Copilot in this solution**
 
 ## Workshop Goals
 
 The exercises in this workshop are to provide a hands-on experience to help you understand how you can start with content in unstructured data, process it and use agents to provide a system that can unlock the value for your users.
 
-## Learning Objectives
+## User Scenarios in this Workshop
 
 - **Contract ingestion** - learn to process a pdf using [Azure AI Document Intillegence](https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence), identify and create metadata to use in filtering, modify embedded text to be more effective in retrieval.
-- **Contract comparison** - 
-- **Risk identification and Clause suggestions** - 
-- **Rewrite a contract with suggestions** - 
+- **Risk identification and Clause suggestions** - analyze contract clauses, comparing to a template contract and set of desired terms
+- **Contract comparison** - compare two contracts
+- **Rewrite a contract with suggestions** - create a new word document of a rewritten contract that starts with an uploaded contract and takes into account a template contract and the desired terms
+
+## Learning Objectives
+- **GET SOME HANDS ON EXPERIENCE WITH SEMANTIC KERNEL AGENTS**
 
 ## Prerequisistes
 
