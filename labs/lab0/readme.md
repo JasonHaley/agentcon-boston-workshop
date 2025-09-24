@@ -81,6 +81,9 @@ AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-4.1
 [Chainlit](https://chainlit.io/) provides us with an easy to use UI without having to do all the work.
 
 1. In VS Code, open a terminal and **change to the src** directory
+```
+cd src
+```
 
 2. Verify you are in the virtual environment, if not run the activate command above. Run the following command to verify Chainlit is ready:
 ```
@@ -93,3 +96,5 @@ Your browser should open and you should get the UI shown below:
 3. Now press Control + C to cancel out of the running Chainlit
 
 Your development environment should now be ready to begin Lab 1
+
+## [Go to Lab 1 >](../lab1/readme.md)
