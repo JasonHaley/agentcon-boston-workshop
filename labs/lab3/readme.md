@@ -8,7 +8,7 @@
 
 ## Prerequisites
 
-1. Lab 0 is required to have the development environment configured and all dependencies installed
+1. [Lab 0](../lab0/readme.md) is required to have the development environment configured and all dependencies installed
 2. This lab is designed to follow Lab 1, not 100% necessary but you are on your own to figure out the missing pieces if you haven't done it
 
 ## Create an agent to analyze a clause
