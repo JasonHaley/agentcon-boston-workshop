@@ -24,7 +24,7 @@ In the remaining labs we will be utilizing [Semantic Kernel](https://github.com/
 
 1. In VS Code, add an **agents** folder to the **src** folder and create a subfolder named **plugins**. 
 2. Create a new file named **search_plugin.py** in that folder and add the following contents to that file:
-```
+```python
 from semantic_kernel.functions import kernel_function
 
 class SearchPlugin:
@@ -56,7 +56,7 @@ This logic defines a plugin class, which uses the `search_service` to do the wor
 ## Create an ChatCompletionAgent agent
 1. In VS Code, find the **agents** folder and add a new file named **compare_clause_agent.py**
 2. Add the following at the top of that file:
-```
+```python
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
@@ -66,7 +66,7 @@ from processors.document_processor import DocumentProcessor
 Thes are the imports we'll need.
 
 3. Next add the following:
-```
+```python
 def get_compare_clause_agent(processor: DocumentProcessor) -> ChatCompletionAgent:
     compare_clause = processor.prompt_service.load_prompt("compare_clause.prompty")
     instructions = processor.prompt_service.render_prompt_as_string(compare_clause, {
@@ -84,7 +84,7 @@ def get_compare_clause_agent(processor: DocumentProcessor) -> ChatCompletionAgen
 ```
 This code first loads the `compare_clause.prompty` file from the **prompts** folder. Feel free to take a look at it and modify it however you want. The prompt is shown below:
 
-```
+```yaml
 ---
 name: Compare Clause
 description: Compare a clause to the template and provide an analysis for legal review
@@ -164,11 +164,11 @@ That is it, we can now wire it up to Chainlit.
 ## Wire it up to Chainlit
 
 1. In the **main.py** file, toward the top - find the comment `# TODO: Add the get_compare_clause_agent import here` and replace it with the following:
-```
+```python
 from agents.compare_clause_agent import get_compare_clause_agent
 ```
 2. In the `on_chat_start` method, find the comment `# TODO: Agents will be added here later` and replace it with the following:
-```
+```python
     agent = get_compare_clause_agent(processor)
     cl.SemanticKernelFilter(kernel=agent.kernel)
     cl.user_session.set("agent", agent)
@@ -176,7 +176,7 @@ from agents.compare_clause_agent import get_compare_clause_agent
 This creates an instance of the agent we just defined and wires it up to Chainlit to be used when you interact with Chainlit
 
 3. Later in the **main.py** file, look for the comment `on_message` method and replace it with the following (make sure you replace the full method including the @cl.on_message decorator):
-```
+```python
 @cl.on_message
 async def on_message(message: cl.Message):
     """Handle incoming messages."""
@@ -222,7 +222,7 @@ This adds a few things to what was there:
 - added the streaming messages from the agent
 
 4. Toward the top of the **main.py** file, find the comment `# TODO: Add starters` and replace it with:
-```
+```python
 @cl.set_starters
 async def set_starters():
     """Set starters for the chat."""
@@ -242,7 +242,7 @@ You are now ready to test it.
 
 - To run from the debugger, Go to Run menu -> Start debugging (**NOTE:** after the debugger starts verify it is using the virtual environment. You may need to stop, activate, then restart the debugger for the first time.)
 - To run from command line, run
-```
+```shell
 chainlit run main.py
 ```
 2. In VS Code, right click on the **data** directory and select **Reveal in File Explorer**.

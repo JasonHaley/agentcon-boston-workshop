@@ -67,7 +67,7 @@ We now want to create two agents:
 We'll define both in the same file.
 
 1. In the **agents** folder, create a new file named **rewrite_contract_agent.py** and add the following:
-```
+```python
 from semantic_kernel import Kernel
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
@@ -112,7 +112,7 @@ def get_rewrite_contract_agent(processor: DocumentProcessor, kernel: Kernel) -> 
 ```
 
 2. Modify the **assistant_agent.py** file to match the following:
-```
+```python
 from semantic_kernel import Kernel
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
@@ -153,12 +153,12 @@ The following items changed:
 ## Wire up Chainlit to test
 
 1. In **main.py**, find the comment toward the top '# TODO: Add kernel_function import here' and replace it with the following:
-```
+```python
 from semantic_kernel.functions import kernel_function
 ``` 
 
 2. Find the comment `# TDDO: Add CreateFileDownloadPlugin here` and add a plugin class for creating a file download link:
-```
+```python
 class CreateFileDownloadPlugin:
     """A plugin to create a file download link."""
 
@@ -184,7 +184,7 @@ class CreateFileDownloadPlugin:
 The system will use this once the contract file has been created.
 
 3. In **main.py** add a new starter to the `set_starters` return, so the array now looks like:
-```
+```python
     return [
         cl.Starter(
             label="Compare Clause",
@@ -207,7 +207,7 @@ The system will use this once the contract file has been created.
 This will add a button for the "Rewrite Contract"
 
 4. Replace the line with to `get_assistant_agent` to the following:
-```
+```python
     agent = get_assistant_agent(processor)
     agent.kernel.add_plugin(CreateFileDownloadPlugin(cl.Message(content="")))
 ```
@@ -217,7 +217,7 @@ Notice this adds the file download plugin to the kernel Chainlit is keeping trac
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
-```
+```shell
 chainlit run main.py
 ```
 Click on the "Rewrite Contract" starter button to test the functionality
