@@ -8,7 +8,7 @@
 
 ## Prerequisites
 
-1. Lab 0 is required to have the development environment configured and all dependencies installed
+1. [Lab 0](../lab0/readme.md) is required to have the development environment configured and all dependencies installed
 2. This lab is designed to follow Lab 1, not 100% necessary but you are on your own to figure out the missing pieces if you haven't done it
 
 ## Create an agent to analyze a clause
@@ -378,3 +378,4 @@ You should now be able to click on any of the starter buttons to use the differe
 
 ![Compare Contract Result2](assets/lab3-img5.png)
 
+## [Go to Lab 4 >](../lab4/readme.md)

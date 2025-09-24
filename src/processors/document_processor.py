@@ -179,7 +179,7 @@ class DocumentProcessor:
             section_index=chunk_index,
             section=section_header,
             text_full=chunk.page_content,
-            # TODO: populate clean text properly
+            # TODO: populate clean text property
             entity_type="clause" if clause_type else "",
             clause_type=clause_type or "",
             is_template=self._is_template_file(filename)

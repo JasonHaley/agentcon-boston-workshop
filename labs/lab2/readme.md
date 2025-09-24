@@ -8,7 +8,7 @@
 
 ## Prerequisites
 
-1. Lab 0 is required to have the development environment configured and all dependencies installed
+1. [Lab 0](../lab0/readme.md) is required to have the development environment configured and all dependencies installed
 2. If you've got a populated Azure AI Search index, Lab 1 is optional. However this lab was designed to follow Lab 1
 
 ## What type of agents are we working with?
@@ -255,3 +255,5 @@ Once the file uploads it will then run the agent and compare the clause for you.
 ![First comparison](assets/lab2-img2.png)
 
 Congratulations, you now created an agent!
+
+## [Go to Lab 3 >](../lab3/readme.md)

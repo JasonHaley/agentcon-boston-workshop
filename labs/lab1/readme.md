@@ -149,7 +149,7 @@ This code finishes up the `classify_clause_heading` method which has 3 steps in 
 
 > NOTE: If you attempt to use this code in another business domain or even want to be able process additional contracts with the final product - **you will need to modify one of these steps**. That unfortunately is the nature of text cleanup using code instead of an AI model.
 
-4. Back in the **document_processor.py** file, in the `_create_single_clause` method, find the comment `# TODO: populate clean text properly` and replace it with this line:
+4. Back in the **document_processor.py** file, in the `_create_single_clause` method, find the comment `# TODO: populate clean text property` and replace it with this line:
 ```
             text_clean=clean_text(chunk.page_content, self.stopwords),
 ```
@@ -266,3 +266,5 @@ And eventually you should see the verification in the UI:
 Now we can move on to the agents!
 
 > NOTE: Make sure you stop you debugger or cancel out of Chainlit before going on to Lab 2
+
+## [Go to Lab 2 >](../lab2/readme.md)
