@@ -4,7 +4,7 @@
 
 1. Create an agent to analyze a clause
 2. Create an agent to compare complete contracts
-3. Create an assistant agent to use all the agents you've created
+3. Create an agent to use all the agents you've created
 
 ## Prerequisites
 
@@ -135,7 +135,7 @@ This will make it easy to test.
 
 ```
 
-6. You have two choices here: run it in the debugger or just run it from the terminal:
+6. Now run it in the debugger or from the terminal:
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
@@ -150,13 +150,13 @@ This will analayze the sample contract clause **retainer** which does not exist 
 
 ![Analyze Clause](assets/lab3-img2.png)
 
-Next, let's compare the whole contracts.
+Next, let's compare both contracts.
 
 ## Create an agent to compare complete contracts
 
-The steps for this agents are about the same as the previous agent, except we first need to add a couple additional methods to the `SearchPlugin`.
+The steps for this agent are about the same as the previous agent, except we first need to add a couple additional methods to the `SearchPlugin`.
 
-1. Open the `SearchPlugin.py` file and add these two methods to the end:
+1. Open the `search_plugin.py` file and add these two methods to the end:
 ```
     @kernel_function(name="get_all_clauses_in_uploaded_contract", description="Get the complete uploaded contract.")
     async def get_all_clauses_in_uploaded_contract(self, uploaded_contract_filename: str) -> str:
