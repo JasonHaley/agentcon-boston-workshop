@@ -11,7 +11,7 @@
 
 ## Prerequisites
 
-1. Lab 0 is required to have the development environment configured and all dependencies installed
+1. [Lab 0](../lab0/readme.md) is required to have the development environment configured and all dependencies installed
 
 ## High level overview of what is provided
 
