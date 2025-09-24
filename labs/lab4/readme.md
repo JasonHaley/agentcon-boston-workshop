@@ -14,7 +14,7 @@
 ## Create a DocGen plugin to create a word document
 
 1. In VS Code, in the **plugins** folder, create a new file named **doc_gen_plugin.py** and add the following:
-```
+```python
 from semantic_kernel.functions import kernel_function
 
 class DocGenPlugin:
