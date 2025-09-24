@@ -32,7 +32,7 @@ python -m venv .venv
 ```
 or linux/Mac
 ```
-source .venv/bin/actiate
+source .venv/bin/activate
 ```
 
 5. Install the required packages by running the following command:
@@ -42,7 +42,7 @@ pip install -r requirements-dev.txt
 
 > NOTE: notice there is **-dev** on the end of that file. It also runs the requirements.txt file in the src directory.
 
-6. Open VS Code for the folder by running the following command:
+6. Open VS Code for the folder by running the following command or just open VS Code with for the folder:
 ```
 code .
 ```
