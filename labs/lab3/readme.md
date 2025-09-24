@@ -18,7 +18,7 @@ With the first agent you created, it was able to analze a clause in the uploaded
 This next agent is to provide an analysis of a clause that doesn't exist in the template - so it will compare that clause with the desired terms and give you an analysis of that clause.
 
 1. In VS Code, in the **prompts** directory, find the file **analyze_clause.prompty** and paste the following contents in that file:
-```
+```yaml
 ---
 name: Analyze Clause
 description: Analyze a clause and provide an assessment for legal review
@@ -80,7 +80,7 @@ Provide specific, actionable next steps prioritized by urgency.
 As you can see this prompt is pretty close to the previous prompt. Feel free to modify it and experiment with it doing things differently.
 
 2. in the **agents** folder, create a new file named **analyze_clause_agent.py** and add the following to that file:
-```
+```python
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
@@ -109,12 +109,12 @@ This agent creation method is just like the last one.
 Now lets wire it up and test it.
 
 3. In **main.py**, toward the top, find the comment `# TODO: Add the get_analyze_clause_agent import here` and replace it with the following:
-```
+```python
 from agents.analyze_clause_agent import get_analyze_clause_agent
 ```
 
 4. In the `set_starters` method, add a new starter for the "Analyze Clause" by modifying the array to the following:
-```
+```python
     return [
         cl.Starter(
             label="Compare Clause",
@@ -129,7 +129,7 @@ from agents.analyze_clause_agent import get_analyze_clause_agent
 This will make it easy to test.
 
 5. For now find and comment out the line `agent = get_compare_clause_agent(processor)` and add the following to test:
-```
+```python
     #agent = get_compare_clause_agent(processor)
     agent = get_analyze_clause_agent(processor)    
 
@@ -139,7 +139,7 @@ This will make it easy to test.
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
-```
+```shell
 chainlit run main.py
 ```
 7. Click on the **Analyze Clause** starter button.
@@ -157,7 +157,7 @@ Next, let's compare both contracts.
 The steps for this agent are about the same as the previous agent, except we first need to add a couple additional methods to the `SearchPlugin`.
 
 1. Open the `search_plugin.py` file and add these two methods to the end:
-```
+```python
     @kernel_function(name="get_all_clauses_in_uploaded_contract", description="Get the complete uploaded contract.")
     async def get_all_clauses_in_uploaded_contract(self, uploaded_contract_filename: str) -> str:
         print(f"Getting all clauses in uploaded contract: {uploaded_contract_filename}")
@@ -179,7 +179,7 @@ The steps for this agent are about the same as the previous agent, except we fir
 These are the methods needed to retrieve the complete listing of clauses for the uploaded contract and the template contract.
 
 2. In the **prompts** directory, find the file **compare_contract.prompty** and paste the following contents in that file:
-```
+```yaml
 ---
 name: Compare Contract
 description: Compare a contract to the template and provide an analysis for legal review
@@ -247,7 +247,7 @@ Provide specific, actionable next steps prioritized by urgency.
 As you can see this prompt is pretty close to the previous prompts. Feel free to modify it and experiment with it doing things differently.
 
 3. in the **agents** folder, create a new file named `compare_contract_agent.py` and add the following to that file:
-```
+```python
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
@@ -276,12 +276,12 @@ This agent creation method is just like the last two.
 Now lets wire it up and test it.
 
 4. In **main.py**, toward the top, find the comment `# TODO: Add the get_compare_contract_agent import here` and replace it with the following:
-```
+```python
 from agents.compare_contract_agent import get_compare_contract_agent
 ```
 
 5. In the `set_starters` method, add a new starter for the "Compare Contract" by modifying the array to the following:
-```
+```python
     return [
         cl.Starter(
             label="Compare Clause",
@@ -300,7 +300,7 @@ from agents.compare_contract_agent import get_compare_contract_agent
 This will make it easy to test.
 
 6. For now find and comment out the line `agent = get_analyze_clause_agent(processor)` and add the following to test:
-```
+```python
     #agent = get_compare_clause_agent(processor)
     #agent = get_analyze_clause_agent(processor)    
     agent = get_compare_contract_agent(processor)
@@ -311,7 +311,7 @@ This will make it easy to test.
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
-```
+```shell
 chainlit run main.py
 ```
 8. Click on the **Compare Contract** starter button.
@@ -331,7 +331,7 @@ One of the neat things about the `ChatCompletionAgent` is it can use other agent
 For this agent, we only need some general instructions - no prompt needed.
 
 1. In the **agents** folder, create a new file named **assistant_agent.py** and add the following to it:
-```
+```python
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
@@ -358,12 +358,12 @@ def get_assistant_agent(processor: DocumentProcessor) -> ChatCompletionAgent:
 ```
 
 2. In the **main.py** file, toward the top, find the comment `# TODO: Add the get_assistant_agent import here` and replace it with the following:
-```
+```python
 from agents.assistant_agent import get_assistant_agent
 ```
 
 3. Now find and comment out the line `agent = get_compare_contract_agent(processor)` and add remove all the commented out calls and replace them with the following:
-```
+```python
     agent = get_assistant_agent(processor)
 ```
 
@@ -371,7 +371,7 @@ from agents.assistant_agent import get_assistant_agent
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
-```
+```shell
 chainlit run main.py
 ```
 You should now be able to click on any of the starter buttons to use the different agents.

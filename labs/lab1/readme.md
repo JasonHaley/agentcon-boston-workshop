@@ -36,7 +36,7 @@ In order for this workshop not to be the specifics about how to implement a RAG 
 
 1. Open the **src/processors/document_processor.py** file in VS Code
 2. Locate the **process_file** method (should start around line 93) and find the comment `# TODO: Parse document into pages`. Replace it with the following:
-```
+```python
             # Parse document into pages
             pages = await self._extract_pages(file, filename)
             if not pages:
@@ -50,7 +50,7 @@ The bulk of the work is performed by the `DocumentIntelligenceService` `parse_do
 As you can see, the document is set to be parse as markdown, then due to the way the DocumentIntelligence SDK works, you need to await a poller.result() to know when the anaysis is complete. Once the result is returned, the pages are enumerated and the Page model is populated with the text and offsets of the pdf pages.
 
 3. Back in the **process_file** method, find the comment `# TODO: Combine all page text` and replace it with the following:
-```
+```python
             # Combine all page text
             full_text = self._combine_page_text(pages)
 ```
@@ -79,7 +79,7 @@ LangChain has a great text splitter that will take the text we extracted from th
 This will be used to configure the splitter to split on the 3rd level of markdown headers if it finds them, otherwise the 2nd and then the 1st if it doesn't find 2nd level.
 
 2. Locate the comment `# TODO: Initialize text splitter` and replace it with the following:
-```
+```python
         # Initialize text splitter
         headers = headers_to_split_on or self.DEFAULT_HEADERS
         self.markdown_splitter = MarkdownHeaderTextSplitter(
@@ -94,7 +94,7 @@ This instantiates the splitter, sets the heading levels and indicates the sectio
 > **Answer**: This has to do with knowing the data and how to make it useful for retrieval. The system is going to work with clauses of the contract, we don't need the heading in that clause - so we will use it as metadata instead.
 
 3. Again navigate to the **process_file** method and locate the comment `# TODO: Split into chunks and create clauses` and replace it with this:
-```
+```python
             clauses = await self._create_clauses(full_text, filename)
             if not clauses:
                 self.logger.warning(f"No clauses created for {filename}")
@@ -121,7 +121,7 @@ Another technique we can use is the removal of legal stop words from the pdf tex
 > NOTE: we could also add the section headings to the "clean_text" to add more signal to our embedding - however I'll leave this as an exercise to the user.
 
 1. In the **document_processor.py** file, find the comment `# TODO: Extract actual header from metadata` in the `_extract_section_header` method and replace it with the following:
-```
+```python
             metadata.get("Header 3") or 
             metadata.get("Header 2") or 
             metadata.get("Header 1") or 
@@ -135,7 +135,7 @@ This file contains a lot of utility text parsing and regular expression matching
 > NOTE: You could use a model to do the categorizing, but I'll leave that to another workshop.
 
 3. Toward the bottom of the file, find the comment `# TODO: Apply rules to classify heading` and replace it with the following:
-```
+```python
     for ctype, patterns in RULES:
         for pat in patterns:
             if pat.search(h):
@@ -150,7 +150,7 @@ This code finishes up the `classify_clause_heading` method which has 3 steps in 
 > NOTE: If you attempt to use this code in another business domain or even want to be able process additional contracts with the final product - **you will need to modify one of these steps**. That unfortunately is the nature of text cleanup using code instead of an AI model.
 
 4. Back in the **document_processor.py** file, in the `_create_single_clause` method, find the comment `# TODO: populate clean text property` and replace it with this line:
-```
+```python
             text_clean=clean_text(chunk.page_content, self.stopwords),
 ```
 This line uses the `clean_text` method to remove the stopwords from the text extracted from the pdf. This should improve the retrieval by removing some words that don't add to the meaning.
@@ -160,7 +160,7 @@ Next, let's create those embeddings.
 ## Create embeddings for the clauses
 
 1. In the **document_process.py** file, find the `_index_clauses` method and the comment `# TODO create embeddings` and replace it with the following:
-```
+```python
         embeddings = await self.embedding_service.create_embeddings(texts)
 ```
 This takes that `text_clean` field from all the clauses and makes batch calls to the OpenAI embedding service to minimize the number of calls.
@@ -168,7 +168,7 @@ This takes that `text_clean` field from all the clauses and makes batch calls to
 ## Save clauses to an Azure AI Search Index
 
 1. A couple of lines below where you put the last code, find the comment `# TODO upload to search index` and replace it with the following:
-```
+```python
         await self.search_service.upload_clauses(clauses, embeddings)
 ```
 This takes the clauses and embeddings and does a batch update to the search index.
@@ -180,17 +180,17 @@ By this time, I"m sure you are getting impatient and want to get to the agent st
 Now lets wire up the Chainlit UI logic and upload the template contract PDF.
 
 1. Open the **main.py** file (in the **src** directory), and locate the comment `# TODO: Add document_processor import here` toward the top and replace it with:
-```
+```python
 from processors.document_processor import DocumentProcessor
 ```
 
 2. Now find the comment `# TODO: Initialize your document processor here` and replace it with the following to initialize the document processor we'll be using with Chainlit:
-```
+```python
 processor = DocumentProcessor()
 ```
 
 3. Finally, find the comment `# TODO: Add file processing logic here` in the `process_files` method and add the following to perform the file uploading and ingestion:
-```
+```python
     if len(files) > 1:
         await cl.Message(content="Only one file is supported at a time. Please upload a single file.").send()
         return
@@ -220,7 +220,7 @@ Next since the method is given a list of files, we have to loop through it (even
 
 - To run from the debugger, Go to Run menu -> Start debugging
 - To run from command line, run
-```
+```shell
 chainlit run main.py
 ```
 
@@ -234,7 +234,7 @@ Both should start up an instance of Chainlit:
 ![Chainlit Attachment](assets/lab1-img6.png)
 
 Give it around a minute. You should see activity in your terminal like this:
-```
+```shell
 2025-09-22 09:08:06 - Loaded 216 stopwords
 2025-09-22 09:08:06 - Loaded desired terms file (7791 characters)
 2025-09-22 09:08:06 - Loaded 216 stopwords
