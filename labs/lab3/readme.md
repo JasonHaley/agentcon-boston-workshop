@@ -362,7 +362,7 @@ def get_assistant_agent(processor: DocumentProcessor) -> ChatCompletionAgent:
 from agents.assistant_agent import get_assistant_agent
 ```
 
-3. Now find and comment out the line `agent = get_compare_contract_agent(processor)` and add remove all the commented out calls and replace them with the following:
+3. Now find and comment out the line `agent = get_compare_contract_agent(processor)` and remove all the commented out calls and replace them with the following:
 ```python
     agent = get_assistant_agent(processor)
 ```

@@ -46,7 +46,7 @@ pip install -r requirements-dev.txt
 ```shell
 code .
 ```
-7. Verify Save Change automatically is turn on for you VS Code. File -> Settings -> Type "auto Save" in the search box. Ensure **onFocusChange** is selected,
+7. Verify Save Change automatically is turn on for you VS Code. File -> Preferences -> Settings -> Type "auto save" in the search box. Ensure **onFocusChange** is selected,
 
 ![Auto Save](assets/lab0-img1.png)
 
