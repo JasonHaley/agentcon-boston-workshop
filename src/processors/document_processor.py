@@ -54,7 +54,10 @@ class DocumentProcessor:
         self.prompt_service = prompt_service or PromptyService()
         self.document_service = document_service or DocumentService()
         self.logger = logging.getLogger(__name__)
-        
+
+        # Create search index if needed
+        #self.search_service.create_index_if_needed()
+
         # Initialize text splitter
         headers = headers_to_split_on or self.DEFAULT_HEADERS
         self.markdown_splitter = MarkdownHeaderTextSplitter(

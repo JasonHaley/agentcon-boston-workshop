@@ -16,7 +16,7 @@ azure-ai-projects==1.1.0b4
 azure-common==1.1.28
 azure-core==1.35.1
 azure-identity==1.25.0
-azure-search-documents==11.5.3
+azure-search-documents==11.7.0b1
 azure-storage-blob==12.26.0
 backoff==2.2.1
 bidict==0.23.1
